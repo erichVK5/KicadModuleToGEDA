@@ -7,8 +7,8 @@ Copyright (C) 2015 Erich S. Heinzle, a1039181@gmail.com
     see LICENSE-gpl-v2.txt for software license
 
 
-This utility has been written to enable gEDA PCB users to convert "legacy"
-kicad footprints, known as modules, to gEDA PCB compatible foootprint files.
+This utility has been written to enable gEDA PCB users to convert Kicad 
+footprints, known as modules, to gEDA PCB compatible foootprint files.
 
 The term Kicad "module" and the PCB term "footprint" can be used fairly
 interchangeably, although a Kicad module "foo.mod" may contain one or
