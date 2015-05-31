@@ -1,5 +1,5 @@
 # KicadModuleToGEDA
-KicadModuleToGEDA - a utility for turning kicad modules to gEDA PCB footprints
+KicadModuleToGEDA - a utility for turning kicad modules into gEDA PCB footprints
 
 README.md v1.0
 Copyright (C) 2015 Erich S. Heinzle, a1039181@gmail.com
@@ -45,7 +45,8 @@ package management system/source, if it isn't already installed.
 
 - clone the KicadModuleToGEDA git repository (this should be simple, after all,
 you already build the most current stable gEDA PCB release from the git
-repository.... don't you?)
+repository.... don't you?). Failing that, download the java source code and
+put them in a suitable directory with the same subdirectories and contents.
 
 - in the KicadModuleToGEDA directory, type:
 
@@ -86,6 +87,8 @@ i.e. rotation is made modulo 90 degrees, and similarly,
 only rudimentary support for rotated text alignments, since Kicad
 supports arbitrary element rotation in the module definition, but
 PCB does not.
+- bezier curves can be defined in an s-file module definition, but
+any such definitions will be ignored by the KicadModuleToGEDE utility.
 
 
 Known issues:
@@ -111,23 +114,23 @@ file formats, and the new file format supported by Kicad is the "s-file" format.
 Kicad "Libraries" can contain modules, symbols and schematics for a particular
 project. Modules can be extracted from zipped Libraries.
 
-The utiltiy supports s-file format modules, and determines what format the
-module is during conversion.
+The utility supports both legacy and s-file format modules, and determines what
+format the module is during conversion.
 
 
 Useful links:
 
-www.gedasymbols.org
+http://www.gedasymbols.org
    - get yourself a CVS account - you'll then be able to share your footprints with other PCB users
 
-www.kicadlib.org
+http://www.kicadlib.org
    - lots to choose from, many are GPL
 
-library.oshec.org
+http://library.oshec.org
    - extensive collection, but some automatically converted arc definitions are in error and
    need tweaking due, it seems, to a glitch in the Eagle2Kicad.ulp utility
 
-smisioto.no-ip.org/elettronica/kicad/kicad-en.html
+http://smisioto.no-ip.org/elettronica/kicad/kicad-en.html
    - a large selection of OHW module definitions. Scroll past the symbol libraries...
 
 
@@ -168,6 +171,8 @@ or
 user@box~$ java KicadModuleToGEDA < kicad_modules/vacuum_tubes.mod
 
 
+
+For the adventurous....
 How to create multiple +/- magnified/shrunken silkscreen layers:
 
 to create a magnified silkscreen layer, add a "Magnification X.XXX" command
