@@ -1,0 +1,4 @@
+# Kicad module converted to gEDA PCB footprint by: Erich Heinzle
+# Kicad module converted from Eagle library by oshec.org
+# All rights reserved by original authors
+# No warranties express or implied

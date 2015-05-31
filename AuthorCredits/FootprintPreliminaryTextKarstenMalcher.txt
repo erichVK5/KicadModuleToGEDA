@@ -1,0 +1,3 @@
+# Kicad module converted to gEDA PCB footprint by: Erich Heinzle
+# Kicad module author: Karsten Malcher 
+# No warranties express or implied

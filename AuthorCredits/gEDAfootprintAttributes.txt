@@ -1,0 +1,3 @@
+Attribute(author "Kicad modules authored by .... Ported to gEDA by Erich Heinzle)
+Attribute(dist-licence "GPLv3")
+Attribute(use-licence "unlimited")

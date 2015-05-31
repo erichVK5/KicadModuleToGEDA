@@ -1,0 +1,3 @@
+# Kicad module converted to gEDA PCB with java utility written by Erich Heinzle
+# All rights reserved by original authors
+# No warranties express or implied
