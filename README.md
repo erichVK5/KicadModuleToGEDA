@@ -27,8 +27,9 @@ and pad minimum sizes are zero nanometres.
 The utility parses Kicad modules and converts decimils and mm to nanometres
 for further manipulation prior to exporting the PCB footprint definition.
 Those seeking to implement conversion of Kicad modules to GEDA PCB footprints
-in their own code can look at/use the conversion logic in the pad, drawnElement,
-drawnArc, and drawnCircle classes.
+in their own code can look at/use the conversion logic in the Pad, DrawnElement,
+Arc, and Circle classes, as well as the FootprintHeader, all of which extend
+the FootprintElementArchetype class, as well as the Footprint class.
 
 Why java? Write once, run anywhere, plus I needed a practical task to
 become more familiar with java. Furthermore, I did not envisage the need for
@@ -37,10 +38,26 @@ module, once converted, can join existing libraries of PCB footprints in
 perpetuity, and converted footprints warrant some vetting before use anyway.
 
 
+Installation:
+
+- install a java compiler and java virtual machine (JVM) using your preferred
+package management system/source, if it isn't already installed.
+
+- clone the KicadModuleToGEDA git repository (this should be simple, after all,
+you already build the most current stable gEDA PCB release from the git
+repository.... don't you?)
+
+- in the KicadModuleToGEDA directory, type:
+
+user@box:~$  javac \*.java
+
+and that should be it, you are now ready to use the KicadModuleToGEDA utility.
+
+
 Features:
 
-- kicad mm and decimil formats are supported
-- the utility will reproduces kicad's drawn segments on the copper layers as pads
+- kicad mm and decimil dimensioned module formats are supported
+- the utility reproduces kicad's drawn segments on the copper layers as pads
 with no soldermask clearance.
 - the utility will identify and convert all modules described in a module file
 into distinct PCB foootprints
