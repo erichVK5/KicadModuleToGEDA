@@ -78,7 +78,7 @@ public class Arc extends FootprintElementArchetype
 
 		kicadArcDescriptor = arg;
 
-		String[] tokens = kicadArcDescriptor.split(" ");;
+		String[] tokens = kicadArcDescriptor.split(" ");
 
 		float parsedValue = 0;
 
@@ -238,8 +238,6 @@ public class Arc extends FootprintElementArchetype
 //		if ((gEDAdeltaAngle > 359) || (gEDAdeltaAngle < -359))
 		{
 			gEDAdeltaAngle -= 360;
-//			gEDAstartAngle = 0;
-//			gEDAdeltaAngle = 360;
 		}
 
 
@@ -284,8 +282,6 @@ public class Arc extends FootprintElementArchetype
 		output = "ElementArc[" +
 		gEDAxCoord + " " +
 		gEDAyCoord + " " +
-//		((xCoordNm + xOffsetNm)/254) + " " +
-//		((yCoordNm + yOffsetNm)/254) + " " +
 		gEDAradius + " " + // gEDAradius is equal to width and height for a circle
 		gEDAradius + " " +
 		gEDAstartAngle + " " + // in degrees
