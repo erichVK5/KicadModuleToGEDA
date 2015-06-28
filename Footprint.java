@@ -127,7 +127,10 @@ public class Footprint
 					// we tokenize the line
         		                tokens = trimmedString.split(" ");
 					
-					if (tokens[0].startsWith("Po") || tokens[0].startsWith("at"))
+
+					// and we then decide what to do with the tokenized lines
+					// we ignore "attr" lines at this stage
+					if (tokens[0].startsWith("Po") || tokens[0].startsWith("at "))
 					{
 						// we find the xOffset in the position, and remember
 						// it is passed in Nm units
