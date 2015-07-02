@@ -88,7 +88,7 @@ only rudimentary support for rotated text alignments, since Kicad
 supports arbitrary element rotation in the module definition, but
 PCB does not.
 - bezier curves can be defined in an s-file module definition, but
-any such definitions will be ignored by the KicadModuleToGEDE utility.
+any such definitions will be ignored by the KicadModuleToGEDA utility.
 
 
 Known issues:
@@ -173,17 +173,18 @@ user@box~$ java KicadModuleToGEDA < kicad_modules/vacuum_tubes.mod
 
 
 For the adventurous....
+
 How to create multiple +/- magnified/shrunken silkscreen layers:
 
 to create a magnified silkscreen layer, add a "Magnification X.XXX" command
 to the $INDEX section of a legacy kicad module, i.e.
 
-$INDEX
-Magnification 1.2
-led-MSA5XXX
-$EndINDEX
-....
-$EndModule
+	$INDEX
+	Magnification 1.2
+	led-MSA5XXX
+	$EndINDEX
+	....
+	$EndModule
 
 
 This will be recognised during parsing by the module conversion utility
@@ -199,20 +200,20 @@ set of silkscreen elements, i.e. for a pair of seven segment displays,
 duplicate the contents of the $MODULE, modify its name, and append it
 to the existing module file
 
-...
-$EndMODULE MSA5XXX
-$MODULE led-MSA5XXX-seconddigit
-Po 4630 0 0 15 00200000 00000000 ~~
-Li led-MSA5XXX
-....
-//identical bits not shown here for brevity
-....
-$EndMODULE
+	...
+	$EndMODULE MSA5XXX
+	$MODULE led-MSA5XXX-seconddigit
+	Po 4630 0 0 15 00200000 00000000 ~~
+	Li led-MSA5XXX
+	....
+	//identical bits not shown here for brevity
+	....
+	$EndMODULE
 
 In addition, an X and Y offset can be specified, in this case, it
 is specified in the standard kicad module instruction
 
-"Po 4630 0 0 15 00200000 00000000 ~~"
+	"Po 4630 0 0 15 00200000 00000000 ~~"
 
 which in this case describes an X offset of "4630", and Y offset
 of zero, which for a decimil module is an X displacement of 463 mil.,
@@ -248,8 +249,8 @@ for example, from being generated.
 
 Two example files are in the Transmogrify directory
 
-LED-DISPLAY-ORIGINAL.mod
-LED-DISPLAY-MAGNIFY-TRANSLATE-EXAMPLE.mod
+	LED-DISPLAY-ORIGINAL.mod
+	LED-DISPLAY-MAGNIFY-TRANSLATE-EXAMPLE.mod
 
 the second file simply contains four copies of the first file, with a single
 $INDEX ... $EndINDEX section at the beginning into which a Magnification directive
@@ -260,22 +261,22 @@ undergoing conversion, to demonstrate how the magnification and translation opti
 can be used
 
 You can see the difference between the output for the original .mod file by
-comparing the results of
+comparing the results of:
 
-user@box~$ java KicadModuleToGEDA -k Transmogrify/LED-DISPLAY-ORIGINAL.mod
+	user@box~$ java KicadModuleToGEDA -k Transmogrify/LED-DISPLAY-ORIGINAL.mod
 
 which produces a single footprint file led-MSA5XXX.fp in the ./Converted directory
 
-with
+with:
 
-user@box~$ java KicadModuleToGEDA -k Transmogrify/LED-DISPLAY-MAGNIFY-TRANSLATE-EXAMPLE.mod
+	user@box~$ java KicadModuleToGEDA -k Transmogrify/LED-DISPLAY-MAGNIFY-TRANSLATE-EXAMPLE.mod
 
 which produces four files
 
-led-MSA5XXX-first.fp
-led-MSA5XXX-second.fp
-led-MSA5XXX-third.fp
-led-MSA5XXX-fourth.fp
+	led-MSA5XXX-first.fp
+	led-MSA5XXX-second.fp
+	led-MSA5XXX-third.fp
+	led-MSA5XXX-fourth.fp
 
 in the ./Converted directory. The four modified files can be combined in a text
 editor to produce a final merged footprint.
