@@ -287,7 +287,11 @@ public class Pad extends FootprintElementArchetype
 						// we now look to see if orientation is specified
 						if (!tokens[parseIndex + 1].startsWith("size"))
 						{
-							kicadShapeOrientation = Integer.parseInt(tokens[parseIndex+1]);
+							// them tricksy kicadians went and changed
+							// from decidegrees to degrees in the s-file
+							// format without telling anyone....
+							// hence the multiplication by 10......
+							kicadShapeOrientation = 10*Integer.parseInt(tokens[parseIndex+1]);
 							parseIndex++;
 						}
                         	        }
