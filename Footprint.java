@@ -35,7 +35,7 @@ import java.util.Scanner;
 
 public class Footprint
 {
-	String footprintName = "newFootprint";
+        String footprintName = "newFootprint";
 	String assembledGEDAelement = "";
 	String passedString = "";
 	FootprintHeader[] moduleTextDescriptors = new FootprintHeader[200];
@@ -144,6 +144,13 @@ public class Footprint
 						moduleTextDescriptors[textDescriptorCount] = new FootprintHeader();
 						moduleTextDescriptors[textDescriptorCount].populateHeader(trimmedString, metricSystem);
 						textDescriptorCount++;
+					}
+					else if (tokens[0].startsWith("T") && !tokens[0].startsWith("T1"))
+					{
+                                          // we exclude the component value T1, and look for other text to render
+						footprintElements[FPFeatureCount] = new FootprintText();
+						footprintElements[FPFeatureCount].populateElement(trimmedString, metricSystem);
+						FPFeatureCount++;
 					}
 					else if (tokens[0].startsWith("fp_text") && tokens[1].startsWith("reference"))
 					{
