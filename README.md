@@ -76,12 +76,14 @@ seven, sixteen or fourteen segment LED displays, for example.
 lines, and also pads drawn on the copper as drawn line elements
 - pins and pads can be translated but magnification does not affect them
 - users can specify a minimum via/pin drill size during conversion
+- Text on the silk layer has now been implemented, using the free Hershey
+stroked font, rendered as line segments on the silkscreen layer, based
+on the text field descriptors in the Kicad module. Rotated text is not
+yet supported.
 
 Deliberate omissions due to a lack of PCB equivalents:
 
 - 3D rendering information is ignored - aka "3D Wings" files.
-- Text on the silk layer is also ignored, since PCB does not support
-text being defined with footprint definitions.
 - Very rudimentary support has been implemented for rotated pads/pins,
 i.e. rotation is made modulo 90 degrees, and similarly,
 only rudimentary support for rotated text alignments, since Kicad
