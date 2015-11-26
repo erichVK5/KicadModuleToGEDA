@@ -28,8 +28,10 @@ The utility parses Kicad modules and converts decimils and mm to nanometres
 for further manipulation prior to exporting the PCB footprint definition.
 Those seeking to implement conversion of Kicad modules to GEDA PCB footprints
 in their own code can look at/use the conversion logic in the Pad, DrawnElement,
-Arc, and Circle classes, as well as the FootprintHeader, all of which extend
-the FootprintElementArchetype class, as well as the Footprint class.
+Arc, Circle and FootprintText classes, as well as the FootprintHeader, all of
+which extend the FootprintElementArchetype class, as well as the Footprint class.
+Use is made of the HersheySansFontClass to generate text at arbitrary rotations
+for drawing as line elements on the silkscreen layer.
 
 Why java? Write once, run anywhere, plus I needed a practical task to
 become more familiar with java. Furthermore, I did not envisage the need for
@@ -73,25 +75,26 @@ that enables families of silkscreen layouts to be generated at different
 sizes. This has been found to be useful for generating families of
 seven, sixteen or fourteen segment LED displays, for example.
 - magnification and translation applies to silk screen arcs, circles, 
-lines, and also pads drawn on the copper as drawn line elements
+lines, text and also pads drawn on the copper as drawn line elements
 - pins and pads can be translated but magnification does not affect them
 - users can specify a minimum via/pin drill size during conversion
 - Text on the silk layer has now been implemented, using the free Hershey
 stroked font, rendered as line segments on the silkscreen layer, based
-on the text field descriptors in the Kicad module. Rotated text is not
-yet supported.
+on the text field descriptors in the Kicad module.
+- Rotated text with rotation in decidegrees as specified by the kicad
+module is now supported.
+- Text should scale satisfactorily with footprint magnification as well.
 
 Deliberate omissions due to a lack of PCB equivalents:
 
 - 3D rendering information is ignored - aka "3D Wings" files.
 - Very rudimentary support has been implemented for rotated pads/pins,
-i.e. rotation is made modulo 90 degrees, and similarly,
-only rudimentary support for rotated text alignments, since Kicad
+i.e. rotation is made modulo 90 degrees, however, rendering of decidegree
+specified rotation for drawn text elements has been implemented (Kicad
 supports arbitrary element rotation in the module definition, but
-PCB does not.
+PCB does not).
 - bezier curves can be defined in an s-file module definition, but
 any such definitions will be ignored by the KicadModuleToGEDA utility.
-
 
 Known issues:
 

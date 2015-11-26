@@ -92,72 +92,20 @@ public class FootprintText extends FootprintElementArchetype {
 
   public String generateGEDAelement(long offsetX, long offsetY, float magnificationRatio) {
 
-    xLayoutOffsetNm = offsetX + xCoordNm; //try this
-    // x position relative to footprint or layout centroid
+    xLayoutOffsetNm = offsetX + xCoordNm;
+    // x position relative to footprint or layout centroid + x position relative to footprint
     yLayoutOffsetNm = offsetY + yCoordNm;
-    // y position relative to footprint or layout centroid
-
-    double footprintMagnificationRatio = magnificationRatio;
+    // y position relative to footprint or layout centroid + y position relative to footprint
 
     HersheySansFontClass hershey = new HersheySansFontClass();
 
-    long xOffsetCentimil = 0;            
-    // this is used to increment the x position of
-    // the text character by character
-    long yOffsetCentimil = 0;           
-    // this is used to increment/set the y position
-    // of the text character by character
-
-    long textCentreOffsetXcentimil = 0;
-    // Kicad specifies the x,y location of the CENTRE of the text
-
-    hershey.setKicadMWidthNm(kicadTextWidthNm);
-
-    long textCentreOffsetYcentimil = hershey.yCentredOffset();
-
-    long textWidthCentimil = 0;
-    String displayedElements  = "";
-
-    // we need to figure out the width of the rendered string
-    // we start by summing the widths of the individuals chars
-    // remembering that hershey.width returns ((maxX-minX) + kerning)
-    for (int i = 0; i < displayedTextField.length(); i++) {
-      textWidthCentimil += hershey.width((int)(displayedTextField.charAt(i)));
-    }
-    // now we subtract the final kerning, add thickness, and 
-    // account for the + 1000 offset of a gEDA font symbol
-    // along the x-axis 
-    textWidthCentimil = textWidthCentimil -
-        hershey.kerning(displayedTextField.charAt(displayedTextField.length()-1))
-        // lopped off end kerning to get final width
-        + (long)(1000*hershey.fontMagnificationRatio)
-        // accounted for final char being an extra +1000 along x axis
-        + hershey.thickness((int)(displayedTextField.charAt(displayedTextField.length()-1))); 
-        // and accounted for thickness of drawn lines
-
-    // we now divide the string width by two to get the offset
-    // needed to centre the rendered string
-    textCentreOffsetXcentimil = (long)(textWidthCentimil / 2.0);
-
-    // we now apply the overall x offset for the 
-    // entire text string, relative to the footprint/module
-    xOffsetCentimil = (long)((xLayoutOffsetNm/254 - textCentreOffsetXcentimil) * footprintMagnificationRatio);
-
-    // we now apply the overall y offset for the entire
-    // text string, relative to the footprint/module
-    //    yOffsetCentimil = (long)((hershey.yCentredOffset() + yLayoutOffsetNm/254) * footprintMagnificationRatio);
-    // we can call the auto - y - centring method of
-    // the hersheyFontclass and let it do the work
-
-    yOffsetCentimil = (long)((yLayoutOffsetNm/254) * footprintMagnificationRatio);
-    
-    for (int i = 0; i < displayedTextField.length(); i++){
-      displayedElements = displayedElements +
-          hershey.drawYCentredChar((int)(displayedTextField.charAt(i)), xOffsetCentimil, yOffsetCentimil, footprintMagnificationRatio, true);
-      xOffsetCentimil += 
-          (long)(hershey.width((int)(displayedTextField.charAt(i)))*footprintMagnificationRatio);
-    }
-    return displayedElements;
+    return hershey.renderKicadText(displayedTextField, xLayoutOffsetNm, yLayoutOffsetNm, kicadRotation, kicadTextWidthNm, magnificationRatio);
+    //    hershey.renderString("abcdeffgghhiijklmmnnopqqrrstuvwxyzz112234567890", 90000, 50000, Math.PI/8, 1.0) +
+    //    hershey.renderString("abcdeffgghhiijklmmnnopqqrrstuvwxyzz112234567890", 30000, 40000, 0, 1.0) +
+    //    hershey.renderString("abcdeffgghhiijklmmnnopqqrrstuvwxyzz112234567890", 30000, 50000, Math.PI, 1.0) +
+    //    hershey.renderString("abcdeffgghhiijklmmnnopqqrrstuvwxyz112234567890", 30000, 40000, 2*Math.PI/5, 1.0) +
+    //    hershey.renderString("abcdeffgghhiijklmmnnopqqrrstuvwxyzz112234567890", 30000, 40000, 5*Math.PI/8, 1.0) +
+    //    hershey.renderString("abcdeffgghhiijklmmnnopqqrrstuvwxyzz112234567890", 30000, 40000, Math.PI/2, 1.0);
   }
 
 
@@ -178,6 +126,8 @@ public class FootprintText extends FootprintElementArchetype {
         parsedValue = Float.parseFloat(tokens[4]);
         kicadMwidthNm = convertToNanometres(parsedValue, metric);
         kicadRotation = Integer.parseInt(tokens[5]);
+        // tenths of degrees Angular
+        // rotation from horizontal, counterclockwise
         parsedValue = Float.parseFloat(tokens[6]);
         kicadLineThicknessNm = convertToNanometres(parsedValue, metric);
         if (tokens[8].startsWith("I"))

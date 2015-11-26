@@ -226,6 +226,8 @@ public class HersheySansFontClass {
   double fontMagnificationRatio = 1.0;
   long defaultMinimumThickness = 1000; // in centimils, i.e. 10 mil line thickness minimum 
 
+  String stringToRender = "";
+
   public void HersheyFontClass() {
   }
 
@@ -233,17 +235,20 @@ public class HersheySansFontClass {
     defaultMinimumThickness = minimumLineThickness;
   }
 
-  public long width(int c) { // this is ((Xmax - Xmin) +  kerning), but not thickness
-    //    System.out.println("c: " + c + ", (int)c: " +  (int)c + ", (c-32): " + (c-32) + ", (int)(c-32): " + (int)(c-32));
+  // this returns the character width in centimils
+  public long width(int c) {
+    // this is ((Xmax - Xmin) +  kerning), but not thickness
     int index = c-32;
     return (long)(fontData[index*2][0]*fontMagnificationRatio);
   }
 
+  // this returns the character kerning in centimils
   public long kerning(int c) {
     int index = c-32;
     return (long)(fontData[index*2][1]*fontMagnificationRatio);
   }
 
+  // this returns the silk line thickness in centimils
   public long thickness(int c) {
     int index = c-32;
     long calculatedThickness = (long)(fontData[index*2][2]*fontMagnificationRatio);
@@ -254,91 +259,246 @@ public class HersheySansFontClass {
     }
   }
 
+  // this returns the offset needed to centre the font relative
+  // to the y-axis in centimils
   public long yCentredOffset() {
-    long textCentreOffsetYcentimil = -1000 - (5333/2); // the hershey sans 1 stroke font is offset +1000, and is ~5333 high
+    long textCentreOffsetYcentimil = -1000 - (5333/2);
+    // the hershey sans 1 stroke font is offset +1000,
+    // and is ~5333 high
     return (long)(textCentreOffsetYcentimil*fontMagnificationRatio);
   }
 
+  // this returns the height of the font in centimils
   public long height() {
-    long heightCentimil = 5333; // the hershey sans 1 stroke font data is 5333 high, and offset +1000 centimil
+    long heightCentimil = 5333;
+    // the hershey sans 1 stroke font data is 5333 high,
+    // and offset +1000 centimil
     return (long)(heightCentimil*fontMagnificationRatio);
   }
 
+  // We are using centimils when retrieving stored
+  // character width and when outputting gEDA elements.
+  // This method changes the default 1.0 magnification
+  // ratio to that needed for a Kicad text element
   public void setKicadMWidthNm(long widthNm) {
-    // we are using centimils when retrieving stored character width and when outputting gEDA elements
-    // this method changes the default 1.0 magnification ratio to that needed for a Kicad text element
-    long nativeMCharFontWidth = width('m') - kerning('m') + thickness('m'); // overall width of drawn element
-    // System.out.println("# width('m') : " + width('m')+ ", kerning('m') : " + kerning('m') + ", thickness('m') : " + thickness('m'));
-    // System.out.println("# nativeMCharFontWidth = width('m') - kerning('m') + thickness('m') :" + nativeMCharFontWidth); 
-    // System.out.println("# widthNm/(254.0 : " + (widthNm/(254.0)));
+    long nativeMCharFontWidth = width('m') - kerning('m') + thickness('m');
+    // overall width of usual drawn element, now used to calculate:
     fontMagnificationRatio = (widthNm/(254.0))/nativeMCharFontWidth;
-    // System.out.println("# font magnification ratio set to : " + fontMagnificationRatio);
   }
 
   public double fontMagnificationRatio() {
     return fontMagnificationRatio;
   }
 
-  public String drawChar(int c, long xOffset, long yOffset, double magRatio, boolean metric) {
-    //   System.out.println("fontData[0][0]" + fontData[0][0] + "fontData[0][1]" + fontData[0][1] + "fontData[0][2]" + fontData[0][2]);
-    int index = ((c-32)*2)+1; // every second row of our array of long vectors has the silk element descriptors
-    String elements = "";
-    long [] strokes = fontData[index];
-    // magRatio is the footprint magnification ratio, not the font magnification ratio
-    // we apply font magnification with fontMagnificationRatio elsewhere   
-    elements = generateSilk(c, strokes, xOffset, yOffset, magRatio, metric);
-    return elements;
+  public void setStringToRender(String passedString) {
+    stringToRender = passedString;
   }
 
+  public long renderedWidthCentimil() {
+    // we need to figure out the width of the rendered string
+    // we start by summing the widths of the individuals chars
+    // remembering that hershey.width() returns ((maxX-minX) + kerning)
+    long widthCentimil = 0;
+    for (int i = 0; i < stringToRender.length(); i++) {
+      widthCentimil += width(stringToRender.charAt(i)); 
+    }
+
+    // now we subtract the final kerning, add thickness, and 
+    // account for the + 1000 offset of a gEDA font symbol
+    // along the x-axis 
+    if (widthCentimil > 0) { // in case string to display not set
+      widthCentimil = widthCentimil
+          - kerning(stringToRender.charAt(stringToRender.length()-1))
+          // lopped off end kerning to get final width
+          + (long)(1000*fontMagnificationRatio())
+          // accounted for final char being an extra +1000 along x axis
+          + thickness((int)(stringToRender.charAt(stringToRender.length()-1))); 
+      // and accounted for thickness of drawn lines
+    }
+    return (long)(widthCentimil*fontMagnificationRatio);
+  }
+
+  // this accepts the character ID as an int, x,y cooords
+  // in decimils, and ignores the metric flag and
+  // returns a character without rotation or
+  // scaling, in centimil layuot format, placed
+  // with it's upper left corner located at x,y   
   public String drawChar(int c, long xOffset, long yOffset, boolean metric) {
-    // System.out.println("fontData[0][0]" + fontData[0][0] + "fontData[0][1]" + fontData[0][1] + "fontData[0][2]" + fontData[0][2]);
-    int index = ((c-32)*2)+1; // every second row of our array of long vectors has the silk element descriptors 
-    // we are not magnifying beyond kicad definition specified requirements 
     double magRatio = 1.0; // default 1.0
+    return drawChar(c, xOffset, yOffset, magRatio, metric);
+  }
+
+  // this accepts the character ID as an int, x,y cooords
+  // in decimils, and a magnification ratio, and ignores the
+  // metric flag and returns a character without rotation or
+  // scaling, in centimil layuot format, placed
+  // with it's upper left corner located at x,y 
+  public String drawChar(int c, long xOffset, long yOffset, double magRatio, boolean metric) {
+    int index = ((c-32)*2)+1;
+    // every second row of our array of long vectors
+    // has the silk element descriptors
     String elements = "";
     long [] strokes = fontData[index];
-    // magRatio is the footprint magnification ratio, not the font magnification ratio
-    // we apply font magnification with fontMagnificationRatio elsewhere   
-    elements = generateSilk(c, strokes, xOffset, yOffset, magRatio, metric);
+    // magRatio is the footprint magnification ratio,
+    // not the font magnification ratio
+    // we apply font magnification with
+    // fontMagnificationRatio elsewhere   
+    double theta = 0;
+    elements = generateSilk(c, strokes, xOffset, yOffset, theta, magRatio, metric);
     return elements;
   }
 
-  public String drawYCentredChar(int c, long xOffset, long yOffset, double magRatio, boolean metric) {
-    int index = ((c-32)*2)+1; // every second row of our array of long vectors has the silk element descriptors 
-    long [] strokes = fontData[index];
-    long centredYoffset = yOffset + yCentredOffset();
-    return generateSilk(c, strokes, xOffset, centredYoffset, magRatio, metric);
-  }
 
-  public String drawYCentredChar(int c, long xOffset, long yOffset, boolean metric) {
-    int index = ((c-32)*2)+1; // every second row of our array of long vectors has the silk element descriptors 
-    long [] strokes = fontData[index];
+  // this accepts the character ID as an int, x,y cooords
+  // in centimils, and ignores the metric flag and
+  // returns a character without rotation or scaling, centred on x,y 
+  // with centimil PCB layout dimensions
+  public String drawCentredChar(int c, long xOffset, long yOffset, boolean metric) {
     double magRatio = 1.0; // default 1.0, no footprint scaling
-    long centredYoffset = yOffset + yCentredOffset();
-    return generateSilk(c, strokes, centredYoffset, yOffset, magRatio, metric);
+    double theta = 0; // default is no rotation
+    return drawCentredChar(c, xOffset, yOffset, magRatio, theta, metric);
   }
 
-  private String generateSilk(int c, long [] strokes, long offsetX, long offsetY, double magRatio, boolean metric) { 
+  // this accepts the character ID as an int, x,y cooords in
+  // centimils, rotation in radians, ignores the metric flag and
+  // returns character with rotation and/or scaling, centred on x,y
+  // with centimil PCB layout dimensions   
+  public String drawCentredChar(int c, long xOffset, long yOffset, double magRatio, double theta, boolean metric) {
+    int index = ((c-32)*2)+1;
+    // i.e. every second row of our array of long vectors has
+    // the silk element descriptors 
+    long [] strokes = fontData[index];
+    long centredYoffset = yOffset; // try this + yCentredOffset();
+    String results = generateSilk(c, strokes, xOffset, yOffset, theta, magRatio, metric);
+    return results;
+  }
+
+  // this will render a kicad module defined text field at coords
+  // given in nanometres, with rotation specified in decdiegrees
+  // i.e. in tenths of a degree
+  // and produce gEDA PCB output using centimil units
+  public String renderKicadText(String theString, long xCoordNm, long yCoordNm, long kicadDecidegrees, long kicadMWidthNm, double footprintMagnificationRatio) {
+    setKicadMWidthNm(kicadMWidthNm); // scale to suit .mod definition
+    double theta = kicadDecidegrees*Math.PI/1800; // convert to radians
+    return renderString(theString, xCoordNm/254, yCoordNm/254, theta, footprintMagnificationRatio);
+  }
+
+  // this accepts radians as the rotation value
+  // and coordinates in decimils
+  // and produce gEDA PCB layout output in centimil units
+  public String renderString(String theString, long xCoord, long yCoord, double theta, double footprintMagnificationRatio) {
+    setStringToRender(theString);
+    String elements = "";
+    long renderedWidth = (long)(renderedWidthCentimil());
+    long deltaTextWidth = 0;
+    long firstCharXOffset = 0;
+    // we first see how long the rendered string will be
+    if (theString.length() != 0) {
+      char firstChar = stringToRender.charAt(0);
+      firstCharXOffset = (long)(((width((int)(firstChar))
+                                  - kerning(firstChar))/2)*footprintMagnificationRatio);
+    }
+    // we then calculate where the string will start, and more
+    // specifically, where the centre of the first character
+    // will be as x,y cooords in centimils
+    long currentX = (long)((xCoord -
+                           (renderedWidth*Math.cos(theta))/2
+                           + (firstCharXOffset*Math.cos(theta)))*footprintMagnificationRatio);
+    long currentY = (long)((yCoord +
+                           (renderedWidth*Math.sin(theta))/2
+                           - (firstCharXOffset*Math.sin(theta)))*footprintMagnificationRatio);
+    // we now walk along the centre line of the rendered string
+    // which is angled theta radians to the x axis, dropping a
+    // rendered character along it at suitable, calculated, spacings,
+    // with each rendered character also rotated theta radians   
+    for (int i = 0; i < stringToRender.length(); i++) {
+      elements = elements +
+          drawCentredChar((int)(stringToRender.charAt(i)), currentX, currentY, footprintMagnificationRatio, theta, true);
+      if (i != (stringToRender.length()-1)) {
+        deltaTextWidth =
+            (long)(footprintMagnificationRatio*(width((int)(stringToRender.charAt(i)))/2 +
+                                                width((int)(stringToRender.charAt(i+1)))/2));
+      }
+      currentX += (long)(deltaTextWidth*Math.cos(theta));
+      currentY -= (long)(deltaTextWidth*Math.sin(theta));
+    }
+    return elements;
+  }
+
+  private String generateSilk(int c, long [] strokes, long offsetX, long offsetY, double theta, double magRatio, boolean metric) { 
     String output = "";
     double magnify = magRatio*fontMagnificationRatio;
     // our final magnification ratio for rendering the elements is
     // the product of footprint and font magnification ratios
     // we don't use the metric flag for now
-    // now, we try to make the final stroke thickness more
-    // visually appealing after magnification
+    // we try to make the final stroke thickness more
+    // visually appealing after magnification,
+    // rather than simply magnifiying the original thickness 
     if ((c-32) > 0) { // i.e. if not the empty space character = ASCII32
       long finalThickness = (long)magnify*thickness(c);
       if ((finalThickness > (long)((width('m')/6.0))) && (finalThickness > defaultMinimumThickness)){
         finalThickness = (long)((width('m')/6.0)*magRatio);
       }
+      // we create some temporary variables for translation
+      // and rotation and, again, translation of the x,y coordinates
+      long TrX1 = 0;
+      long TrX2 = 0;
+      long TrY1 = 0;
+      long TrY2 = 0;
+      long tempX1 = 0;
+      long tempY1 = 0;
+      long tempX2 = 0;
+      long tempY2 = 0;
+
+      double testTheta = Math.PI*3/4;
       for (int i = 0; i < strokes.length; i = i + 4) {
+        // first, we translate the stroked character data
+        // so that it is centred on the origin (0,0)
+        TrX1 = (long)(strokes[i] - (width(c) - kerning(c))/2);
+        TrY1 = (long)(strokes[i+1] + yCentredOffset());
+        TrX2 = (long)(strokes[i+2] - (width(c) - kerning(c))/2);
+        TrY2 = (long)(strokes[i+3] + yCentredOffset());
+
+        // now we apply our intended rotation of theta radians
+        tempX1 = rotatedXCoord(TrX1, TrY1, theta);
+        tempY1 = rotatedYCoord(TrX1, TrY1, theta);
+        tempX2 = rotatedXCoord(TrX2, TrY2, theta);
+        tempY2 = rotatedYCoord(TrX2, TrY2, theta);
+
+        // now we translate the rotated coords back to where they
+        // belong and apply the necessary magnification
+        // TODO: test that the scaling/magnification works properly
+        TrX1 = (long)(tempX1*magnify + offsetX);
+        TrY1 = (long)(tempY1*magnify + offsetY);
+        TrX2 = (long)(tempX2*magnify + offsetX);
+        TrY2 = (long)(tempY2*magnify + offsetY);
+
+        // and finish by generating the centimil unit
+        // pcb layout text line with the transformed coords
         output = output + "ElementLine[" +
-            (long)(magnify*strokes[i] + offsetX) + " " + (long)(magnify*(strokes[i+1] + offsetY)) + " " + 
-            (long)(magnify*strokes[i+2] + offsetX) + " " + (long)(magnify*(strokes[i+3] + offsetY)) + " " +
-            finalThickness + "]\n"; // try to moderate thicknening, to improve visual appeal
+            TrX1 + " " + TrY1 + " " + 
+            TrX2 + " " + TrY2 + " " +
+            finalThickness + "]\n";
       }
       output = output + "#\n";
     }
     return output;
   }
+
+  // a small routine to rotate an X coordinate around 0,0
+  // by an amount theta, in radians
+  // requires original (x,y) coords and theta
+  private long rotatedXCoord(long xOrig, long yOrig, double theta) {
+    // just to confuse things, we recall that up is -y direction
+    return (long)(Math.cos(theta)*xOrig + Math.sin(theta)*yOrig);
+  }
+
+  // a small routine to rotate a Y coordinate around 0,0
+  // by an amount theta, in radians
+  // requires original (x,y) coords and theta
+  private long rotatedYCoord(long xOrig, long yOrig, double theta) {
+    // just to confuse things, we recall that up is -y direction
+    return (long)(-Math.sin(theta)*xOrig + Math.cos(theta)*yOrig);
+  }
+
 }
