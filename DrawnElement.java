@@ -159,7 +159,23 @@ public class DrawnElement extends FootprintElementArchetype
                         parsedValue = Float.parseFloat(tokens[10]);
                         lineThicknessNm = convertToNanometres(parsedValue, metric);
 // need to sort out layers though and parse text options though
-
+			if (tokens[8].startsWith("F.Cu")) {
+				kicadLayer = 15; // front most copper layer
+                        } else if (tokens[8].startsWith("B.Cu")) {
+                                kicadLayer = 0;
+                        } else if (tokens[8].startsWith("B.Paste")) {
+				kicadLayer = 18;
+                        } else if (tokens[8].startsWith("F.Paste")) {
+                                kicadLayer = 19;
+                        } else if (tokens[8].startsWith("B.Silk")) {
+                                kicadLayer = 20;
+                        } else if (tokens[8].startsWith("F.Silk")) {
+                                kicadLayer = 21;
+                        } else if (tokens[8].startsWith("B.Mask")) {
+                                kicadLayer = 22;
+                        } else if (tokens[8].startsWith("F.Mask")) {
+                                kicadLayer = 23;
+			}
 //                        kicadLayer = Integer.parseInt(tokens[8]);
 //                      System.out.println("Kicad DS Layer is :" + kicadLayer);
                 }
@@ -211,7 +227,9 @@ public class DrawnElement extends FootprintElementArchetype
 		gEDAlineThickness = (lineThicknessNm / 254); // every 254 nm is 0.01 mil
 
 		if (kicadLayer == 21) // i.e. drawing segment drawn on top silkscreen
-		{
+		{ // currently ignoring bottom silkscreen B.SilkS = 20, and
+		// B.Paste = 18, F.Paste = 19, since gEDA uses the clearance value
+		// and ignoring the F.Mask = 23 and B.Mask = 22 as well    
 			output = "ElementLine[" +
 			gEDAxCoordOne + " " +  // we multiply by 10 for gEDAs .01mil units
 			gEDAyCoordOne + " " +

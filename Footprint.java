@@ -109,8 +109,16 @@ public class Footprint
 			}
 			else if (tokens[0].startsWith("$MODULE") || tokens[0].startsWith("module"))
 			{       // it all starts here, with the module header
-
+			// first we look for double quotes inserted by the likes of madparts
 				footprintName = tokens[1];
+				if (footprintName.length() > 2) {
+					if (footprintName.charAt(0) == '"') {
+						footprintName = footprintName.substring(1);
+					}
+                        	        if (footprintName.charAt(footprintName.length()-1) == '"') {
+                                	        footprintName = footprintName.substring(0,footprintName.length()-1);
+                             		}
+				}
 				// now we get rid of characters ![a-zA-Z0-9.-] which
 				// may be unacceptable for a filename
 				footprintName = footprintName.replaceAll("[^a-zA-Z0-9.-]", "_");

@@ -379,7 +379,8 @@ public class KicadModuleToGEDA
 			parsedString = currentLine.trim();
 			tokens = parsedString.split(" ");
 
-			if (parsedString.contains("module "))
+			if (parsedString.contains("module") // look for module start, but...
+				&& !(parsedString.contains("modules"))) // ...ignore the header
 			{
 		                if (verboseMode)
         		        {
