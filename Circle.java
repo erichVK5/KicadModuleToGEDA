@@ -93,7 +93,7 @@ public class Circle extends FootprintElementArchetype
                         parsedValue = Float.parseFloat(tokens[5]);
                         lineThicknessNm = convertToNanometres(parsedValue, metric);
 		}
-		else if (tokens[0].startsWith("fp_arc"))
+		else if (tokens[0].startsWith("fp_circle"))
                 {
 			metric = true;
                         parsedValue = Float.parseFloat(tokens[2]);
@@ -104,8 +104,10 @@ public class Circle extends FootprintElementArchetype
                         xPointNm = convertToNanometres(parsedValue, metric);
                         parsedValue = Float.parseFloat(tokens[6]);
                         yPointNm = convertToNanometres(parsedValue, metric);
-                        parsedValue = Float.parseFloat(tokens[8]);
-                        lineThicknessNm = convertToNanometres(parsedValue, metric);
+			if (tokens[9].startsWith("width")) {
+                        	parsedValue = Float.parseFloat(tokens[10]);
+                        	lineThicknessNm = convertToNanometres(parsedValue, metric);
+			}
                 }
 
 		else
