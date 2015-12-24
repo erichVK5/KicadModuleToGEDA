@@ -84,6 +84,8 @@ on the text field descriptors in the Kicad module.
 - Rotated text with rotation in decidegrees as specified by the kicad
 module is now supported.
 - Text should scale satisfactorily with footprint magnification as well.
+- The utility has been tested and found to work on kicad modues exported
+from the "madparts" GUI based footprint creation utility 
 
 Deliberate omissions due to a lack of PCB equivalents:
 
@@ -138,6 +140,8 @@ http://library.oshec.org
 http://smisioto.no-ip.org/elettronica/kicad/kicad-en.html
    - a large selection of OHW module definitions. Scroll past the symbol libraries...
 
+http://madparts.org/index.html
+   - a python based utility that can import and create kicad and Eagle footprints
 
 Usage:
 
