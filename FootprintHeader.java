@@ -99,8 +99,15 @@ public class FootprintHeader extends FootprintElementArchetype
 			// we skip Kicad's penWidth, unusedFlagN, visible and layer fields as
 			// they aren't useful in gEDA, and jump to the final text string
                         kicadDeviceDescription =
-					tokens[tokens.length-1].replaceAll("[^a-zA-Z0-9.-]", " ");
-					// avoid off by one error
+					tokens[tokens.length-1].replaceAll("[^a-zA-Z0-9.-]", "_");
+                        if (kicadDeviceDescription.length() >= 2) {
+                          if (kicadDeviceDescription.startsWith("_") &&
+                              kicadDeviceDescription.startsWith("_")) {
+                            kicadDeviceDescription =
+                                kicadDeviceDescription.substring(1,kicadDeviceDescription.length()-1);
+                          }
+                        }
+                        // avoid off by one error
 
 		}
 		else if (tokens[0].startsWith("fp_text"))

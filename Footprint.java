@@ -122,7 +122,7 @@ public class Footprint
 				// now we get rid of characters ![a-zA-Z0-9.-] which
 				// may be unacceptable for a filename
 				footprintName = footprintName.replaceAll("[^a-zA-Z0-9.-]", "_");
-//				System.out.println(footprintName + " is the footprint name found.");
+                                //				System.out.println(footprintName + " is the footprint name found.");
 
 				// we now step through the module line by line
 				while (moduleDefinition.hasNext() && !moduleFinished)

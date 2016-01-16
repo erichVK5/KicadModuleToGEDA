@@ -145,6 +145,14 @@ public class Pad extends FootprintElementArchetype
 			if (tokens[0].startsWith("Sh"))
 			{
 				kicadShapePadName = tokens[1];
+                                // we get rid of leading and trailing ""
+                                if (kicadShapePadName.length() >= 2) {
+                                  if (kicadShapePadName.startsWith("\"") && kicadShapePadName.endsWith("\"")) {
+                                    kicadShapePadName = 
+                                        kicadShapePadName.substring(1,kicadShapePadName.length()-1);
+                                    // System.out.println("trimmed pad name: " + kicadShapePadName);
+                                  }
+                                }
 //                              we get rid of odd characters that may interfere with pad naming:
 				kicadShapePadName = kicadShapePadName.replaceAll("[^a-zA-Z0-9.-]", "_");
 				kicadDrillShape = tokens[2].charAt(0);
@@ -173,11 +181,18 @@ public class Pad extends FootprintElementArchetype
 			}
 			if (tokens[0].startsWith("Ne"))
 			{
-				kicadShapeNetName = tokens[1];	
+				kicadShapeNetName = tokens[2];	
+                                // we get rid of leading and trailing ""
+                                if (kicadShapeNetName.length() >= 2) {
+                                  if (kicadShapeNetName.startsWith("\"") && kicadShapeNetName.endsWith("\"")) {
+                                    kicadShapeNetName = 
+                                        kicadShapeNetName.substring(1,kicadShapeNetName.length()-1);
+                                  }
+                                }
+
 //		we now need to cleanse the NetName of nasties like '$' which sometimes occur
 				kicadShapeNetName = kicadShapeNetName.replaceAll("[^a-zA-Z0-9.-]", "_");
 //				System.out.println("Shape's Net name: " + shapeNetName);
-
 			}
 			if (tokens[0].startsWith("At"))
 			{
@@ -360,6 +375,14 @@ public class Pad extends FootprintElementArchetype
 
 			}
 		}
+                // might be good to default populate the net name
+                // if empty 
+                // System.out.println("NetName : " + kicadShapeNetName);
+                // System.out.println("PadName : " + kicadShapePadName); 
+                if (kicadShapeNetName.length() == 0) {
+                  kicadShapeNetName =
+                      kicadShapePadName;
+                }
 //		System.out.println("finished populating pad object");
 	}
 
