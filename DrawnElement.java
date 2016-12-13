@@ -187,6 +187,35 @@ public class DrawnElement extends FootprintElementArchetype
 		}
 	}
 
+        public String generateGEDAglyph(long xOffsetNm, long yOffsetNm, float magnificationRatio)
+        {
+	  // we take care of magnification here
+          // we can convert footprint silkscreen elements
+          // into a glyph with this
+
+               	gEDAxCoordOne = (long)((xCoordOneNm + xOffsetNm)*magnificationRatio/254);
+                                       // divide nm by 254 to produce
+               	gEDAyCoordOne = (long)((yCoordOneNm + yOffsetNm)*magnificationRatio/254);
+                                       // 0.01 mil units
+                gEDAxCoordTwo = (long)((xCoordTwoNm + xOffsetNm)*magnificationRatio/254);
+                gEDAyCoordTwo = (long)((yCoordTwoNm + yOffsetNm)*magnificationRatio/254);
+
+		gEDAlineThickness = (long) ((magnificationRatio*lineThicknessNm)/ 254); // every 254 nm is 0.01 mil
+
+		if (kicadLayer == 21) // i.e. drawing segment drawn on top silkscreen
+		{ // currently ignoring bottom silkscreen B.SilkS = 20, and
+		// B.Paste = 18, F.Paste = 19, since gEDA uses the clearance value
+		// and ignoring the F.Mask = 23 and B.Mask = 22 as well    
+			output = "SymbolLine[" +
+			gEDAxCoordOne + " " +  // we multiply by 10 for gEDAs .01mil units
+			gEDAyCoordOne + " " +
+			gEDAxCoordTwo + " " +
+			gEDAyCoordTwo + " " +
+			gEDAlineThickness + "]\n";
+		}
+		return output;
+	}
+
 	public String generateGEDAelement(long xOffsetNm, long yOffsetNm, float magnificationRatio) // offsets in nm, and magnificationRatio as float
 	{
 		// we take care of magnification here
