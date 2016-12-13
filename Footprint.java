@@ -265,6 +265,17 @@ public class Footprint
 		return footprintName + ".fp";
 	}
 
+        public String generateGEDAglyph(float magnificationRatio)
+        {
+                String gEDAglyph = "";
+                for (int counter = 0; counter < FPFeatureCount; counter++)
+                {
+                        gEDAglyph = gEDAglyph +
+                                footprintElements[counter].generateGEDAglyph(xOffset,yOffset,magnificationRatio);
+                }
+                return gEDAglyph;
+	}
+
 	public String generateGEDAfootprint(float magnificationRatio)
 	{
 		assembledGEDAelement = licenceText1 + footprintName + licenceText2;
