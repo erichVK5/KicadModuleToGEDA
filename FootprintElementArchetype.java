@@ -31,6 +31,11 @@ public class FootprintElementArchetype
 		return("x: " + xOffsetNm + ", y: " + yOffsetNm);
 	}
 
+	public String generateGEDAglyph(long xOffset, long yOffset, float magnificationRatio)
+	{
+		return "";
+	}
+
 	public String generateGEDAelement(long xOffset, long yOffset, float magnificationRatio)
 	{
 		return "";
