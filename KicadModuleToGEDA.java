@@ -39,6 +39,7 @@ public class KicadModuleToGEDA
                 boolean defaultHTMLsummary = true;
                 boolean legacyKicadMmMetricUnits = false; // the usual legacy format is decimils
 		boolean usingStdInForModule = false;
+		boolean generateFontGlyphs = false;
 		long minimumViaAndDrillSizeNM = 0; // default is no minimum drill size
 						   // in nanometres
 						   // i.e. 300000 = 0.3mm = 11.81mil
@@ -131,6 +132,10 @@ public class KicadModuleToGEDA
 				else if (args[count].startsWith("-q"))
 				{
 					quietMode = true;
+				}
+				else if (args[count].startsWith("-g"))
+				{
+					generateFontGlyphs = true;	
 				}
 				else if (args[count].startsWith("-e"))
 				{
@@ -517,9 +522,15 @@ public class KicadModuleToGEDA
                        	}
 
 			// we now append a generated element header and it's fields
-			footprintData = footprintData +
-				footprintsInLibrary[counter].generateGEDAfootprint(magnificationRatio);
-
+			if (generateFontGlyphs) {
+				footprintData = "Symbol(\'"
+						+ counter
+						+ "\' 12)\n(\n"
+						+ footprintsInLibrary[counter].generateGEDAglyph(magnificationRatio);
+			} else {
+				footprintData = footprintData +
+					footprintsInLibrary[counter].generateGEDAfootprint(magnificationRatio);
+			}
 			// this is where we could insert some Attribute fields
 //                        System.out.println("Attribute(use-licence \"GPLv3\")");
 //                        System.out.println("Attribute(dist-licence \"unlimited\")");
