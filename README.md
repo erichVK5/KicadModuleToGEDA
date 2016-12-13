@@ -86,6 +86,12 @@ module is now supported.
 - Text should scale satisfactorily with footprint magnification as well.
 - The utility has been tested and found to work on kicad modues exported
 from the "madparts" GUI based footprint creation utility 
+- The utility can export footprints as glyphs, if the -g flag is used, to
+enable the silkscreen elements of footprints to be turned into font
+SymbolLine definitions. Some subsequent assembly will be required to create
+a parseable font file. A source of a kicad library for conversion into
+glyphs could be a kicad library of footprints exported from pcb-rnd.
+A magnification ratio can also be specified in the module header.
 
 Deliberate omissions due to a lack of PCB equivalents:
 
@@ -166,6 +172,7 @@ Options are:
 		 Default is:   AuthorCredits/DefaultPrependedCommentsFile.txt
 	 -d DestinationdirForConvertedModules
 		 Default is:   Converted/
+	 -g Glyph export, in which case only silk lines are exported, as SymbolLine definitions
 	 -s SummaryOfModuleOrModulesForHTML
 		 Default is: "converted Kicad module"
 	 -e enforceMinimumDrillAndViaSize
